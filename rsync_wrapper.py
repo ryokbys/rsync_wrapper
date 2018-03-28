@@ -96,8 +96,11 @@ if __name__ == "__main__":
     #print(cmd)
     print(' '.join(cmd))
     p = Popen(cmd,stdout=PIPE,stderr=PIPE)
-    out,err = p.communicate()
-    print(out)
+    # out,err = p.communicate()
+    # print(out)
+    for line in iter(p.stdout.readline,''):
+        print(line,end='')
+    
     
     
     
