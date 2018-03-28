@@ -20,6 +20,7 @@ src: 'src/'
 dst: 'dst/'
 include: ['dir1/','file1']
 exclude: ['*']
+option: ['-avzh']
 ```
 
 ```bash

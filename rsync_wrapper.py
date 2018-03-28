@@ -26,6 +26,7 @@ src: './'
 dst: 'host:path/to/dir/'
 include: ['file1','file2','dir1'],
 exclude: ['file3','dir2']
+option: ['-avzh',]
 """
 
 _error_msg = """
@@ -78,10 +79,10 @@ if __name__ == "__main__":
     src = conf['src']
     dst = conf['dst']
     # path = conf['path']
-    option = '-avzh'
+    option = conf['option']
     if dry:
-        option = '-avzhn'
-    cmd.append(option)
+        option.append('-n')
+    cmd.extend(option)
     includes = conf['include']
     excludes = conf['exclude']
     for i in includes:

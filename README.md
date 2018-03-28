@@ -10,6 +10,7 @@
    dst: 'host:path/to/dir/'
    include: ['file1','file2','dir1']
    exclude: ['file3','dir2']
+   option: ['-avzh']
    ```
 4. Modify the `.uprsync` or `.downsync` file.
 5. Run the script as
