@@ -11,20 +11,18 @@ Options:
 """
 from __future__ import print_function
 
-import os
+import os,sys
 from docopt import docopt
 import yaml
 from subprocess import Popen, PIPE
 
 __author__ = "RYO KOBAYASHI"
-__version__ = "180328"
+__version__ = "200116"
 
-_up_file = './.upsync'
-_down_file = './.downsync'
+_conf_file = './.sync'
 _conf_template = """
-src: './'
-dst: 'host:path/to/dir/'
-include: ['file1','file2','dir1'],
+remote: 'host:path/to/dir/'
+include: ['file1','file2','dir1']
 exclude: ['file3','dir2']
 option: ['-avzh',]
 """
@@ -33,10 +31,9 @@ _error_msg = """
 Usage:
   rsync_wrapper.py (up|down) [options]
 
-And there must be a config file of the name '.upsync' or '.downsync' (depending on up/down)
-in the current working directory.
+And there must be a config file of the name '.sync' in the current working directory.
 
-The .upsync and .downsync files should be like the following:
+The .sync file should be like the following:
 """ + _conf_template
 
 def read_conf(fname='./.rsync'):
@@ -62,22 +59,19 @@ if __name__ == "__main__":
     up = args['up']
     down = args['down']
 
-    if up:
-        if not os.path.exists(_up_file):
-            raise ValueError('No up config file '+_up_file
-                             +_error_msg)
-        conf = read_conf(_up_file)
-    elif down:
-        if not os.path.exists(_down_file):
-            raise ValueError('No down config file '+_down_file
-                             +_error_msg)
-        conf = read_conf(_down_file)
-    else:
+    if not os.path.exists(_conf_file):
+        raise ValueError('No up config file '+_conf_file
+                         +_error_msg)
+    try:
+        conf = read_conf(_conf_file)
+    except:
         raise ValueError(_error_msg)
 
     cmd = ['rsync']
-    src = conf['src']
-    dst = conf['dst']
+    local = './'
+    if 'local' in conf.keys():
+        local = conf['local']
+    remote = conf['remote']
     # path = conf['path']
     option = conf['option']
     if dry:
@@ -86,20 +80,26 @@ if __name__ == "__main__":
     includes = conf['include']
     excludes = conf['exclude']
     for i in includes:
-        cmd.append('--include={0}'.format(i))
+        cmd.append('--include="{0}"'.format(i))
     for e in excludes:
-        cmd.append('--exclude={0}'.format(e))
+        cmd.append('--exclude="{0}"'.format(e))
 
-    cmd.append(src)
-    cmd.append(dst)
-
+    #...Opposite direction in up and down
+    if up:
+        cmd.append(local)
+        cmd.append(remote)
+    elif down:
+        cmd.append(remote)
+        cmd.append(local)
+    
     #print(cmd)
     print(' '.join(cmd))
-    p = Popen(cmd,stdout=PIPE,stderr=PIPE)
+    #p = Popen(cmd,stdout=PIPE,stderr=PIPE)
+    os.system(' '.join(cmd))
     # out,err = p.communicate()
     # print(out)
-    for line in iter(p.stdout.readline,''):
-        print(line,end='')
+    #for line in iter(p.stdout.readline,''):
+    #    print(line,end='')
     
     
     
