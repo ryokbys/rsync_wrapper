@@ -3,6 +3,7 @@
 ## What is this?
 
 This script helps syncing data of a certain directory in the local machine and the remote machine.
+If you use this script, we strongly recommend that you make the directory structures of local and remote machines identical so that you do not need to specify the remote directory.
 
 ## Usage
 
