@@ -114,13 +114,12 @@ if __name__ == "__main__":
     os.system(' '.join(cmd))
     
     #...Save the configuration if there is not .sync file
-    if not os.path.exists('.sync'):
-        conf = {
-            'remote_host': remote_host,
-            'remote_dir': remote_dir,
-            'include': includes,
-            'exclude': excludes,
-            'option': option,
-        }
-        with open('.sync','w') as f:
-            f.write(yaml.dump(conf))
+    conf = {
+        'remote_host': remote_host,
+        'remote_dir': remote_dir,
+        'include': includes,
+        'exclude': excludes,
+        'option': option,
+    }
+    with open('.sync','w') as f:
+        f.write(yaml.dump(conf))
