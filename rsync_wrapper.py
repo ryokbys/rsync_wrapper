@@ -7,21 +7,24 @@ Usage:
 
 Options:
   -h, --help  Show this message and exit.
-  --dryrun    Not to operate, only output. [default: false]
+  -d          Not to operate, only output. [default: false]
+  -r, --remote REMOTE
+              Remote host name. [default: None]
 """
 from __future__ import print_function
 
-import os,sys
+import os
 from docopt import docopt
 import yaml
-from subprocess import Popen, PIPE
+# from subprocess import Popen, PIPE
 
 __author__ = "RYO KOBAYASHI"
 __version__ = "200116"
 
 _conf_file = './.sync'
 _conf_template = """
-remote: 'host:path/to/dir/'
+remote_host: remote
+remote_dir: 'path/to/dir/'
 include: ['file1','file2','dir1']
 exclude: ['file3','dir2']
 option: ['-avzh',]
@@ -55,7 +58,8 @@ def read_conf(fname='./.rsync'):
 if __name__ == "__main__":
 
     args = docopt(__doc__)
-    dry = args['--dryrun']
+    dry = args['-d']
+    remote_host = args['--remote']
     up = args['up']
     down = args['down']
 
@@ -64,23 +68,40 @@ if __name__ == "__main__":
                          +_error_msg)
     try:
         conf = read_conf(_conf_file)
-    except:
+    except Exception as e:
         raise ValueError(_error_msg)
 
     cmd = ['rsync']
+    
+    if remote_host == 'None':  # Remote given by the option is used prior to that in conf-file.
+        if 'remote_host' in conf.keys():
+            remote_host = conf['remote_host']
+        else:
+            raise ValueError('Remote host must be specified in either option or conf-file.')
+
+    cwd = os.getcwd()
+    home = os.environ['HOME']+'/'
+    remote_dir = cwd.replace(home,'')
+    remote = remote_host +':' +remote_dir
     local = './'
-    if 'local' in conf.keys():
-        local = conf['local']
-    remote = conf['remote']
-    # path = conf['path']
-    option = conf['option']
+    
+    if 'option' in conf.keys():
+        option = conf['option']
+    else:  # default option
+        option = ['-avzh']
     if dry:
         option.append('-n')
     cmd.extend(option)
-    includes = conf['include']
-    excludes = conf['exclude']
+    
+    includes = []
+    if 'include' in conf.keys():
+        includes = conf['include']
     for i in includes:
         cmd.append('--include="{0}"'.format(i))
+        
+    excludes = []
+    if 'exclude' in conf.keys():
+        excludes = conf['exclude']
     for e in excludes:
         cmd.append('--exclude="{0}"'.format(e))
 
