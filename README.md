@@ -20,9 +20,9 @@ Then the files of the same path to the current working directory at the REMOTE h
    ```
    $ rsync_wrapper.py up -r REMOTE
    ```
-   Then the files specified in `.sync` will be uploaded using `rsync` command.
+   Then the files specified in `.sync` will be uploaded using `rsync` command. If you specify `down` instead of `up`, files on the `REMOTE` host will be downloaded.
 
-## Config file
+## Config file `.sync`
 
 If there is a `.sync` file with the following contents in the directory, the information will be used.
 ```
@@ -32,8 +32,8 @@ exclude: ['file3','dir2']
 option: ['-avzh']
 ```
 
-- `remote_host` given by the option is used prior to that in config-file.
-- The current working directory in the local machine is also used for the remote directory, except when `remote_dir: path/to/dir/` is specified in the config-file.
+- `remote_host` given by the option is used prior to that in `.sync` file.
+- The path the current working directory in the local machine is also used for the remote directory, except when `remote_dir: path/to/dir/` is specified in `.synce file.`
 
 
 ## Make aliases to the workflows
@@ -44,9 +44,4 @@ alias upsync='rsync_wrapper.py up'
 alias downsync='rsync_wrapper.py down'
 ```
 Then you can run the script by `upsync` or `downsync`.
-
-## Contact
-
-Please contact me if you have questions or requests.
-ryo.kbys [at] gmail.com
 
