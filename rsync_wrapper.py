@@ -16,10 +16,9 @@ from __future__ import print_function
 import os
 from docopt import docopt
 import yaml
-# from subprocess import Popen, PIPE
 
 __author__ = "RYO KOBAYASHI"
-__version__ = "200116"
+__version__ = "200420"
 
 _conf_file = './.sync'
 _conf_template = """
@@ -51,7 +50,7 @@ def read_conf(fname='./.rsync'):
     if not os.path.exists(fname):
         raise IOError('File not exists: '+fname)
     with open(fname,'r') as f:
-        conf = yaml.load(f)
+        conf = yaml.safe_load(f)
     return conf
 
 
@@ -111,15 +110,17 @@ if __name__ == "__main__":
         cmd.append(remote)
         cmd.append(local)
     
-    #print(cmd)
     print(' '.join(cmd))
-    #p = Popen(cmd,stdout=PIPE,stderr=PIPE)
     os.system(' '.join(cmd))
-    # out,err = p.communicate()
-    # print(out)
-    #for line in iter(p.stdout.readline,''):
-    #    print(line,end='')
     
-    
-    
-    
+    #...Save the configuration if there is not .sync file
+    if not os.path.exists('.sync'):
+        conf = {
+            'remote_host': remote_host,
+            'remote_dir': remote_dir,
+            'include': includes,
+            'exclude': excludes,
+            'option': option,
+        }
+        with open('.sync','w') as f:
+            f.write(yaml.dump(conf))
