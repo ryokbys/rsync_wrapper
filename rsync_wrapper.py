@@ -63,13 +63,11 @@ if __name__ == "__main__":
     up = args['up']
     down = args['down']
 
-    if not os.path.exists(_conf_file):
-        raise ValueError('No up config file '+_conf_file
-                         +_error_msg)
     try:
         conf = read_conf(_conf_file)
     except Exception as e:
-        raise ValueError(_error_msg)
+        print('There is not .sync file or failed to read .sync file.')
+        conf = {}
 
     cmd = ['rsync']
     
@@ -79,7 +77,7 @@ if __name__ == "__main__":
         else:
             raise ValueError('Remote host must be specified in either option or conf-file.')
 
-    cwd = os.getcwd()
+    cwd = os.getcwd()+'/'
     home = os.environ['HOME']+'/'
     remote_dir = cwd.replace(home,'')
     remote = remote_host +':' +remote_dir
