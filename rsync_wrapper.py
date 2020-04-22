@@ -10,6 +10,10 @@ Options:
   -d          Not to operate, only output. [default: false]
   -r, --remote REMOTE
               Remote host name. [default: None]
+  -i, --include Include
+              Include files passed to rsync, separated by comma. [default: None]
+  -e, --exclude EXCLUDE
+              Exclude files passed to rsync, separated by comma. [default: None]
 """
 from __future__ import print_function
 
@@ -61,6 +65,12 @@ if __name__ == "__main__":
     remote_host = args['--remote']
     up = args['up']
     down = args['down']
+    includes = args['--include'].split(',')
+    excludes = args['--exclude'].split(',')
+    if includes == ['None']:
+        includes = []
+    if excludes == ['None']:
+        excludes = []
 
     try:
         conf = read_conf(_conf_file)
@@ -89,16 +99,16 @@ if __name__ == "__main__":
     if dry:
         option.append('-n')
     cmd.extend(option)
-    
-    includes = []
-    if 'include' in conf.keys():
-        includes = conf['include']
+
+    if includes != []:
+        if 'include' in conf.keys():
+            includes = conf['include']
     for i in includes:
         cmd.append('--include="{0}"'.format(i))
         
-    excludes = []
-    if 'exclude' in conf.keys():
-        excludes = conf['exclude']
+    if excludes != []:
+        if 'exclude' in conf.keys():
+            excludes = conf['exclude']
     for e in excludes:
         cmd.append('--exclude="{0}"'.format(e))
 
