@@ -100,13 +100,13 @@ if __name__ == "__main__":
         option.append('-n')
     cmd.extend(option)
 
-    if includes != []:
+    if includes == []:
         if 'include' in conf.keys():
             includes = conf['include']
     for i in includes:
         cmd.append('--include="{0}"'.format(i))
         
-    if excludes != []:
+    if excludes == []:
         if 'exclude' in conf.keys():
             excludes = conf['exclude']
     for e in excludes:
