@@ -75,7 +75,7 @@ if __name__ == "__main__":
     try:
         conf = read_conf(_conf_file)
     except Exception as e:
-        print('There is not .sync file or failed to read .sync file.')
+        print('WARNING: No .sync file.')
         conf = {}
 
     cmd = ['rsync']
