@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 """
-Wrap `rsync` command.
+Wrap `rsync` command for more ease of use.
 
 Usage:
-  rsync_wrapper.py (up|down) [options]
+  {0:s} (up|down) [options]
 
 Options:
   -h, --help  Show this message and exit.
@@ -15,14 +15,13 @@ Options:
   -e, --exclude EXCLUDE
               Exclude files passed to rsync, separated by comma. [default: None]
 """
-from __future__ import print_function
 
-import os
+import os,sys
 from docopt import docopt
 import yaml
 
 __author__ = "RYO KOBAYASHI"
-__version__ = "200420"
+__version__ = "220119"
 
 _conf_file = './.sync'
 _conf_template = """
@@ -57,10 +56,9 @@ def read_conf(fname='./.rsync'):
         conf = yaml.safe_load(f)
     return conf
 
-
-if __name__ == "__main__":
-
-    args = docopt(__doc__)
+def main():
+    args = docopt(__doc__.format(os.path.basename(sys.argv[0])))
+    
     dry = args['-d']
     remote_host = args['--remote']
     up = args['up']
@@ -133,3 +131,9 @@ if __name__ == "__main__":
     }
     with open('.sync','w') as f:
         f.write(yaml.dump(conf))
+
+    return None
+
+if __name__ == "__main__":
+
+    main()
