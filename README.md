@@ -9,10 +9,10 @@ If you use this script, we strongly recommend that you make the directory struct
 
 1. Install `rsync_wapper` command as follows.
    ```shell
-   git clone https://github.com/ryokbys/rsync_wrapper.git
-   cd rsync_wrapper/
-   python setup.py sdist
-   pip install -e .
+   $ git clone https://github.com/ryokbys/rsync_wrapper.git
+   $ cd rsync_wrapper/
+   $ python setup.py sdist
+   $ pip install -e .
    ```
 2. cd to the directory where you want to use this script.
 3. Run the command,
