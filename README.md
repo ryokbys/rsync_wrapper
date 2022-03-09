@@ -18,8 +18,6 @@ $ pip install -e .
 
 ## Usage
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/tC2rEv2m2I0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
 ### Sending data
 Move to the directory where you want to use this script and run the command,
 ```shell
