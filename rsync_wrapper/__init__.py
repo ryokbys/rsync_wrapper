@@ -21,7 +21,7 @@ from docopt import docopt
 import yaml
 
 __author__ = "RYO KOBAYASHI"
-__version__ = "220119"
+__version__ = "250226"
 
 _conf_file = './.sync'
 _conf_template = """
