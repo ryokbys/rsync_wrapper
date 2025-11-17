@@ -84,7 +84,7 @@ def main():
         else:
             raise ValueError('Remote host must be specified in either option or conf-file.')
 
-    cwd = os.getcwd()+'/'
+    cwd = os.environ.get('PWD')+'/'
     home = os.environ['HOME']+'/'
     remote_dir = cwd.replace(home,'')
     remote = remote_host +':' +remote_dir
