@@ -3,15 +3,16 @@
 Wrap `rsync` command for more ease of use.
 
 Usage:
-  {0:s} (up|down) [options]
+  {0:s} (up|down) [FILES...] [options]
 
 Options:
   -h, --help  Show this message and exit.
   -d          Not to operate, only output. [default: false]
   -r, --remote REMOTE
               Remote host name. [default: None]
-  -i, --include Include
-              Include files passed to rsync, separated by comma. [default: None]
+  -i, --include INCLUDE
+              Include files passed to rsync, separated by comma.
+              Ignored when FILES are given. [default: None]
   -e, --exclude EXCLUDE
               Exclude files passed to rsync, separated by comma. [default: None]
 """
@@ -21,7 +22,7 @@ from docopt import docopt
 import yaml
 
 __author__ = "RYO KOBAYASHI"
-__version__ = "250226"
+__version__ = "260615"
 
 _conf_file = './.sync'
 _conf_template = """
@@ -56,6 +57,27 @@ def read_conf(fname='./.rsync'):
         conf = yaml.safe_load(f)
     return conf
 
+def _include_patterns(files):
+    """Return rsync --include/--exclude args that sync exactly the given files.
+
+    Parent directories are automatically included so rsync can descend into them.
+    A final --exclude="*" blocks everything else.
+    """
+    args = []
+    seen = set()
+    for f in files:
+        parts = f.replace('\\', '/').split('/')
+        for depth in range(1, len(parts)):
+            dirpat = '/'.join(parts[:depth]) + '/'
+            if dirpat not in seen:
+                seen.add(dirpat)
+                args.append('--include="{0}"'.format(dirpat))
+        if f not in seen:
+            seen.add(f)
+            args.append('--include="{0}"'.format(f))
+    args.append('--exclude="*"')
+    return args
+
 def main():
     args = docopt(__doc__.format(os.path.basename(sys.argv[0])))
     
@@ -63,6 +85,7 @@ def main():
     remote_host = args['--remote']
     up = args['up']
     down = args['down']
+    files = args['FILES']
     includes = args['--include'].split(',')
     excludes = args['--exclude'].split(',')
     if includes == ['None']:
@@ -98,17 +121,21 @@ def main():
         option.append('-n')
     cmd.extend(option)
 
-    if includes == []:
-        if 'include' in conf.keys():
-            includes = conf['include']
-    for i in includes:
-        cmd.append('--include="{0}"'.format(i))
-        
-    if excludes == []:
-        if 'exclude' in conf.keys():
-            excludes = conf['exclude']
-    for e in excludes:
-        cmd.append('--exclude="{0}"'.format(e))
+    if files:
+        # Selective sync: ignore include/exclude from conf and CLI
+        cmd.extend(_include_patterns(files))
+    else:
+        if includes == []:
+            if 'include' in conf.keys():
+                includes = conf['include']
+        for i in includes:
+            cmd.append('--include="{0}"'.format(i))
+
+        if excludes == []:
+            if 'exclude' in conf.keys():
+                excludes = conf['exclude']
+        for e in excludes:
+            cmd.append('--exclude="{0}"'.format(e))
 
     #...Opposite direction in up and down
     if up:
@@ -121,16 +148,17 @@ def main():
     print(' '.join(cmd))
     os.system(' '.join(cmd))
     
-    #...Save the configuration if there is not .sync file
-    conf = {
-        'remote_host': remote_host,
-        'remote_dir': remote_dir,
-        'include': includes,
-        'exclude': excludes,
-        'option': option,
-    }
-    with open('.sync','w') as f:
-        f.write(yaml.dump(conf))
+    #...Save the configuration (skip when FILES given — transient operation)
+    if not files:
+        conf = {
+            'remote_host': remote_host,
+            'remote_dir': remote_dir,
+            'include': includes,
+            'exclude': excludes,
+            'option': option,
+        }
+        with open('.sync','w') as f:
+            f.write(yaml.dump(conf))
 
     return None
 

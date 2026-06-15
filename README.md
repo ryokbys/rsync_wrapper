@@ -11,7 +11,13 @@ Install the `rsync_wapper` command as follows.
 ```shell
 $ git clone https://github.com/ryokbys/rsync_wrapper.git
 $ cd rsync_wrapper/
-$ python setup.py sdist
+$ pip install build   # if not already installed
+$ python -m build
+$ pip install dist/rsync_wrapper-*.whl
+```
+
+For development (editable install):
+```shell
 $ pip install -e .
 ```
 
@@ -30,6 +36,16 @@ Then the files specified in `.sync` will be uploaded using `rsync` command.
 $ rsync_wrapper down -r REMOTE
 ```
 Then the files of the same path to the current working directory at the REMOTE host will be downloaded by using `rsync` command.
+
+### Selective file transfer
+
+Pass filenames as positional arguments to sync only those files.
+Parent directories are included automatically.
+```shell
+$ rsync_wrapper up file1.txt subdir/data.py -r REMOTE
+$ rsync_wrapper down results/output.dat -r REMOTE
+```
+When files are specified, `include`/`exclude` entries in `.sync` are ignored and `.sync` is not updated.
 
 
 ## Config file `.sync`
