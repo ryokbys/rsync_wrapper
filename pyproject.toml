@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rsync_wrapper"
+version = "260304"
+description = "A sample wrapper of rsync command."
+readme = "README.md"
+requires-python = ">=3.6"
+authors = [
+    {name = "Ryo KOBAYASHI", email = "kobayashi.ryo@nitech.ac.jp"}
+]
+dependencies = [
+    "docopt",
+    "PyYAML>=6.0"
+]
+
+[project.urls]
+Homepage = 'https://github.com/ryokbys/rsync_wrapepr/'
+
+[project.scripts]
+rsync_wrapper = "rsync_wrapper:main"
